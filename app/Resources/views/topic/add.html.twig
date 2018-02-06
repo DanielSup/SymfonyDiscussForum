@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Domovská stránka</a></li>
+            <li>Přidání nového tématu</li>
+        </ul>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Domovská stránka</a></li>
+            <li>Přidání nového tématu</li>
+        </ul>
+    </nav>
+    <h1>Přidání nového tématu</h1>
+    {{ form(form) }}
+{% endblock %}
+

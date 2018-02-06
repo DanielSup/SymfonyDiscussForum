@@ -1,0 +1,17 @@
+{% block body %}
+    <nav>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Témata</a></li>
+            <li><a href="{{ path("add_topic") }}">Přidání nového tématu</a></li>
+        </ul>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Domovská stránka</a></li>
+            {% for parent in parentTopics %}
+                <li><a href="{{ path("subtopics", {"id": parent.id}) }}">{{ parent.name }}</a></li>
+            {% endfor %}
+            <li>Editace tématu {{ topic.name }}</li>
+        </ul>
+    </nav>
+    <h1>Editace tématu {{ topic.name }}</h1>
+    {{ form(form) }}
+{% endblock %}

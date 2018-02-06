@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Témata</a></li>
+            <li><a href="{{ path("add_topic") }}">Přidání nového tématu</a></li>
+        </ul>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Domovská stránka</a></li>
+            {% for parent in parentTopics %}
+                <li><a href="{{ path("subtopics", {"id": parent.id}) }}">{{ parent.name }}</a></li>
+            {% endfor %}
+            <li>{{ topic.name }}</li>
+        </ul>
+    </nav>
+    <h1>{{ topic.name }}</h1>
+    <p>topic.description</p>
+    <p>Níže je uveden seznam podtémat tématu {{ topic.name }}. Ke každému podtématu je uvedeno, jak se uživatel dostane na seznam příspěvků, kde může k danému tématu přidat nový příspěvek. Ke každému podtématu je uveden také odkaz na seznam jeho podtémat.</p>
+    <dl>
+        {% for topic in topics %}
+            <dt>{{ topic.name }}</dt>
+            <dd>
+                <dl>
+                    <dt>Popis</dt>
+                    <dd>{{ topic.description }}</dd>
+                    <dt>Seznam příspěvků</dt>
+                    <dd><a href="{{ path("posts", {"id" : topic.id}) }}">Příspěvky</a></dd>
+                    <dt>Seznam podtémat</dt>
+                    <dd><a href="{{ path("subtopics", {"id" : topic.id}) }}">Podtémata</a></dd>
+                </dl>
+            </dd>
+        {% endfor %}
+    </dl>
+{% endblock %}
+
