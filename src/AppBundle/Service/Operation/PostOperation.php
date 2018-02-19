@@ -12,13 +12,17 @@ namespace AppBundle\Service\Operation;
 use AppBundle\Entity\Post;
 use AppBundle\Entity\Topic;
 use AppBundle\Entity\User;
+use AppBundle\Service\Functionality\PostFunctionality;
+use AppBundle\Service\Functionality\TopicFunctionality;
+use AppBundle\Service\Functionality\UserFunctionality;
 
 class PostOperation
 {
     private $postFunctionality;
     private $topicFunctionality;
     private $userFunctionality;
-    public function __construct($postFunctionality, $topicFunctionality, $userFunctionality)
+    public function __construct(PostFunctionality $postFunctionality, TopicFunctionality $topicFunctionality,
+                                UserFunctionality $userFunctionality)
     {
         $this->postFunctionality = $postFunctionality;
         $this->topicFunctionality = $topicFunctionality;
@@ -26,7 +30,7 @@ class PostOperation
     }
 
     /**
-     * @return mixed
+     * @return PostFunctionality
      */
     public function getPostFunctionality()
     {
@@ -34,7 +38,7 @@ class PostOperation
     }
 
     /**
-     * @return mixed
+     * @return TopicFunctionality
      */
     public function getTopicFunctionality()
     {
@@ -42,38 +46,66 @@ class PostOperation
     }
 
     /**
-     * @return mixed
+     * @return UserFunctionality
      */
     public function getUserFunctionality()
     {
         return $this->userFunctionality;
     }
-    public function addUser(User $user){
 
+    public function addUser(User $user){
+        $this->getUserFunctionality()->addOrEditUser($user);
     }
     public function editUser(User $user){
-
+        $this->getUserFunctionality()->addOrEditUser($user);
     }
     public function addPost(Post $post, Topic $topic, User $author){
-
+        $this->postFunctionality->addOrEditPost($post);
+        $author->addPost($post);
+        $topic->addPost($post);
+        $this->userFunctionality->addOrEditUser($author);
+        $this->topicFunctionality->addOrEditTopic($topic);
     }
     public function editPost(Post $post, Topic $topic){
-
+        $newTopic = $post->getTopic();
+        $topic->removePost($post);
+        $newTopic->addPost($post);
+        $this->postFunctionality->addOrEditPost($post);
+        $this->topicFunctionality->addOrEditTopic($topic);
+        $this->topicFunctionality->addOrEditTopic($newTopic);
     }
 
     public function addTopic(Topic $topic, User $author){
-
+        $this->topicFunctionality->addOrEditTopic($topic);
+        $author->addTopic($topic);
+        $this->userFunctionality->addOrEditUser($author);
     }
-    public function editTopic(Topic $topic, User $author){
-
+    public function editTopic(Topic $topic){
+        $this->topicFunctionality->addOrEditTopic($topic);
     }
-    public function removePost($id){
-
+    public function removePost(Post $post){
+        $post->getAuthor()->removePost($post);
+        $post->getTopic()->removePost($post);
+        $this->postFunctionality->removePost($post);
+        $this->userFunctionality->addOrEditUser($post->getAuthor());
+        $this->topicFunctionality->addOrEditTopic($post->getTopic());
     }
-    public function removeUser($id){
-
+    public function removeUser(User $user){
+        $topics = $user->getTopics();
+        foreach ($topics as $topic){
+            $this->removeTopic($topic);
+        }
+        $this->userFunctionality->removeUser($user);
     }
-    public function removeTopic($id){
-
+    public function removeTopic(Topic $topic){
+        $subtopics = $topic->getSubtopics();
+        foreach($subtopics as $subtopic){
+            $this->removeTopic($subtopic);
+        }
+        $posts = $topic->getPosts();
+        foreach($posts as $post){
+            $this->removePost($post);
+        }
+        $this->topicFunctionality->removeTopic($topic);
     }
 }

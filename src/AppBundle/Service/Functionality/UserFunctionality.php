@@ -19,7 +19,7 @@ class UserFunctionality extends Controller
     public function __construct(EntityManager $entityManager){
         $this->entityManager = $entityManager;
     }
-    public function addOrEditPost(User $user){
+    public function addOrEditUser(User $user){
         $em = $this->entityManager;
         $em->persist($user);
         $em->flush();

@@ -128,5 +128,18 @@ class User
     {
         $this->username = $username;
     }
+
+    public function addPost(Post $post){
+        $this->posts->add($post);
+    }
+    public function removePost(Post $post){
+        $this->posts->removeElement($post);
+    }
+    public function addTopic(Topic $topic){
+        $this->topics->add($topic);
+    }
+    public function removeTopic(Topic $topic){
+        $this->topics->removeElement($topic);
+    }
 }
 
