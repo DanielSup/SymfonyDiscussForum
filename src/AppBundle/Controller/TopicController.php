@@ -8,6 +8,7 @@ use AppBundle\Form\TopicType;
 use AppBundle\Service\Operation\PostOperation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 
 class TopicController extends Controller
@@ -20,12 +21,12 @@ class TopicController extends Controller
      * @Route("/add_topic", name="add_topic")
      */
     public function newTopicAction(Request $request){
-        $form = $this->createForm(TopicType::class, new Topic());
+        $form = $this->createForm(TopicType::class, new Topic())->add('Přidat téma', SubmitType::class);
         if($form->isSubmitted() && $form->isValid()){
             $topic = $form->getData();
             $this->postOperation->addTopic($topic, $this->getUser());
         }
-        return $this->render('topic/add.html.twig', ['form' => $form,
+        return $this->render('topic/add.html.twig', ['form' => $form->createView(),
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
     }
@@ -34,7 +35,7 @@ class TopicController extends Controller
      */
     public function editTopicAction($id){
         $topic =  $this->postOperation->getTopicFunctionality()->getTopicByID($id);
-        $form = $this->createForm(TopicType::class, $topic);
+        $form = $this->createForm(TopicType::class, $topic)->add('Upravit téma', SubmitType::class);
         $parentTopics = array();
         $actualTopic = $topic;
         while(!empty($actualTopic)){
@@ -47,7 +48,7 @@ class TopicController extends Controller
             $topic = $form->getData();
             $this->postOperation->editTopic($topic);
         }
-        return $this->render('topic/edit.html.twig', ['form' => $form,
+        return $this->render('topic/edit.html.twig', ['form' => $form->createView(),
             'parentTopics' => $parentTopics,
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
@@ -57,7 +58,7 @@ class TopicController extends Controller
      */
     public function getPostsAction(Request $request, $id){
         $topic =  $this->postOperation->getTopicFunctionality()->getTopicByID($id);
-        $form = $this->createForm(Post::class, new Post());
+        $form = $this->createForm(Post::class, new Post())->add('Přidat příspěvek', SubmitType::class);
         $parentTopics = array();
         $actualTopic = $topic;
         while(!empty($actualTopic)){
@@ -71,7 +72,7 @@ class TopicController extends Controller
             $this->postOperation->addPost($post, $topic, $this->getUser());
         }
         $posts = $topic->getPosts();
-        return $this->render('topic/view.html.twig', ['form' => $form,
+        return $this->render('topic/view.html.twig', ['form' => $form->createView(),
             'parentTopics' => $parentTopics,
             'posts' => $posts,
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,

@@ -15,7 +15,7 @@ class PostType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', TextareaType::class, array('label' => 'Titulek'))
+        $builder->add('title', null, array('label' => 'Titulek'))
             ->add('text', TextareaType::class, array('label' => 'Text příspěvku'));
     }/**
      * {@inheritdoc}

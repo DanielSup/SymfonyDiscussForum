@@ -10,13 +10,13 @@ namespace AppBundle\Service\Functionality;
 
 
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class UserFunctionality extends Controller
 {
     private $entityManager;
-    public function __construct(EntityManager $entityManager){
+    public function __construct(EntityManagerInterface $entityManager){
         $this->entityManager = $entityManager;
     }
     public function addOrEditUser(User $user){

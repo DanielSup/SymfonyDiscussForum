@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Témata</a></li>
+            <li><a href="{{ path("add_topic") }}">Přidání nového tématu</a></li>
+        </ul>
+        <ul>
+            <li><a href="{{ path("homepage") }}">Domovská stránka</a></li>
+            {% for parent in parentTopics %}
+                <li><a href="{{ path("subtopics", {"id": parent.id}) }}">{{ parent.name }}</a></li>
+            {% endfor %}
+            <li>Diskuse k tématu{{ topic.name }}</li>
+        </ul>
+    </nav>
+    <h1>Diskuse k tématu {{ topic.name }}</h1>
+    <p>{{ topic.description }}</p>
+    {{ form(form) }}
+    <ul>
+        {% for post in posts %}
+            <li>
+                <article>
+                    <header>
+                        {{ post.title }}
+                    </header>
+                    <section>
+                        <dl>
+                            <dt>Autor</dt>
+                            <dd>{{ post.author.name }}</dd>
+                            <dt>Datum a čas přidání</dt>
+                            <dd>{{ post.timestamp }}</dd>
+                            <dt>Text</dt>
+                            <dd>{{ post.text }}</dd>
+                        </dl>
+                    </section>
+                </article>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

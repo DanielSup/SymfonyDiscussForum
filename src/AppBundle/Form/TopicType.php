@@ -15,8 +15,8 @@ class TopicType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', TextareaType::class, array('label' => 'Název tématu'))->
-        add('description', TextareaType::class, array('label' => 'Název tématu'))->
+        $builder->add('title', null, array('label' => 'Název tématu'))->
+        add('description', TextareaType::class, array('label' => 'Popis tématu'))->
         add('parentTopic', EntityType::class, array('label' => 'Nadřazené téma',
                 'class' => 'AppBundle:Topic', 'choice_label' => 'id'));
     }/**
