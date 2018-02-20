@@ -4,7 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Post;
 use AppBundle\Entity\Topic;
+use AppBundle\Entity\User;
 use AppBundle\Form\TopicType;
+use AppBundle\Form\UserType;
 use AppBundle\Service\Operation\PostOperation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -17,10 +19,24 @@ class TopicController extends Controller
     public function __construct(PostOperation $postOperation){
         $this->postOperation = $postOperation;
     }
+
+    /**
+     * @Route("/register", name="register")
+     */
+    public function registerAction(Request $request){
+        $form = $this->createForm(UserType::class, new User())->add("Registrovat",SubmitType::class);
+        if($form->isSubmitted() && $form->isValid()){
+            $this->postOperation->addUser($form->getData());
+        }
+        return $this->render('default/registerUser.html.twig', [ 'form' => $form->createView(),
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        ]);
+    }
     /**
      * @Route("/add_topic", name="add_topic")
      */
     public function newTopicAction(Request $request){
+        $this->denyAccessUnlessGranted("add_topic", null);
         $form = $this->createForm(TopicType::class, new Topic())->add('Přidat téma', SubmitType::class);
         if($form->isSubmitted() && $form->isValid()){
             $topic = $form->getData();
@@ -35,6 +51,7 @@ class TopicController extends Controller
      */
     public function editTopicAction($id){
         $topic =  $this->postOperation->getTopicFunctionality()->getTopicByID($id);
+        $this->denyAccessUnlessGranted("edit_topic", $topic);
         $form = $this->createForm(TopicType::class, $topic)->add('Upravit téma', SubmitType::class);
         $parentTopics = array();
         $actualTopic = $topic;
@@ -58,6 +75,7 @@ class TopicController extends Controller
      */
     public function getPostsAction(Request $request, $id){
         $topic =  $this->postOperation->getTopicFunctionality()->getTopicByID($id);
+        $this->denyAccessUnlessGranted("get_posts", $topic);
         $form = $this->createForm(Post::class, new Post())->add('Přidat příspěvek', SubmitType::class);
         $parentTopics = array();
         $actualTopic = $topic;
@@ -83,6 +101,7 @@ class TopicController extends Controller
      */
     public function getSubtopicsAction($id){
         $topic =  $this->postOperation->getTopicFunctionality()->getTopicByID($id);
+        $this->denyAccessUnlessGranted("get_subtopics", $topic);
         $parentTopics = array();
         $actualTopic = $topic;
         while(!empty($actualTopic)){
